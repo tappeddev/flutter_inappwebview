@@ -1660,6 +1660,19 @@ public class InAppWebView: WKWebView, UIScrollViewDelegate, WKUIDelegate, WKNavi
     
     public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         
+        print("Got auth challange: \(challenge)")
+        
+        if let serverTrust = challenge.protectionSpace.serverTrust {
+            let credential = URLCredential(trust: serverTrust)
+            print("Servertrust: \(serverTrust) with crendetials: \(credential)")
+            
+            completionHandler(.useCredential, credential)
+        } else {
+            print("No credentials...")
+            completionHandler(.useCredential, nil)
+        }
+        return;
+        
         if windowId != nil, !windowCreated {
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
